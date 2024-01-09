@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Trimmer</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #ecf0f3;
+            /* Light blue background */
+            margin: 0;
+            padding: 0;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(45deg, #ffffff 49%, #f0f0f0 51%);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+            /* Smooth shadow transition */
+        }
+
+        h1 {
+            text-align: center;
+            color: #3498db;
+            /* Blue color */
+            margin-bottom: 20px;
+        }
+
+        .video-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .original-video,
+        .trimmed-video {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            /* Darker shadow */
+            transition: transform 0.3s ease;
+            /* Smooth scaling transition */
+        }
+
+        .original-video:hover,
+        .trimmed-video:hover {
+            transform: scale(1.05);
+            /* Hover effect: scale the video by 5% */
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            background-color: #3498db;
+            color: white;
+            padding: 14px 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            /* Smooth transition */
+        }
+
+        input[type="submit"]:hover {
+            background-color: #2980b9;
+            /* Darker shade on hover */
+            transform: scale(1.1);
+            /* Hover effect: scale the button by 10% */
+        }
+  
+      </style>
+</head>
+
+<body onload="checkTrimmedVideoAvailability()">
+    <div class="container-fluid">
+        <div class="form-container">
+            <h1>
+                <a href="/">Video Trimmer</a>
+            </h1>
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="videoFile">Choose Video File:</label>
+                    <input type="file" class="form-control" name="file" id="videoFile" accept="video/*" required
+                        onchange="previewOriginalVideo()">
+                </div>
+               
+
+                
+                <div class="video-container">
+
+
+                    {% if trimmed_video %}
+                    <video id="previewOriginalVideo" controls class="original-video mb-3">
+                        <source src="{{ original_video_path }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <h5 class="text-muted mb-3">The original video path is: {{ original_video_path }}</h5>
+                    {% else %}
+                    
+                    <video id="previewOriginalVideo" controls class="original-video mb-3"></video>
+                    
+
+                    {% endif %}
+
+
+
+
+
+
+
+                    {% if trimmed_video %}
+                    <video id="previewTrimmedVideo" controls class="trimmed-video mb-3">
+                        <source src="/trimmed_videos/{{ trimmed_video }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="start_time">Start Time (in seconds):</label>
+                    <input type="number" step="0.1" class="form-control" name="start_time" id="start_time" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="end_time">End Time (in seconds):</label>
+                    <input type="number" step="0.1" class="form-control" name="end_time" id="end_time" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Trim and Preview</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function previewOriginalVideo() {
+            const originalVideoElement = document.getElementById('previewOriginalVideo');
+            const originalVideoURL = URL.createObjectURL(document.getElementById('videoFile').files[0]);
+            originalVideoElement.src = originalVideoURL;
+            originalVideoElement.play();
+        }
+        function checkTrimmedVideoAvailability() {
+            debugger;
+        console.log("reached here: befor if ");
+        const trimmedVideoElement = document.getElementById('previewTrimmedVideo');
+        const trimmedVideoURL = trimmedVideoElement.src;
+        console.log("trimmed URL" , trimmedVideoURL);
+        if (trimmedVideoURL) {
+            console.log("reached here: after if ");
+            const originalVideoElement = document.getElementById('previewOriginalVideo');
+            originalVideoElement.classList.display('none');
+            trimmedVideoElement.classList.display('block');
+        }
+    }       
+    </script>
+</body>
+
+</html>
